@@ -20,15 +20,11 @@ public class HealthBarView : MonoBehaviour
 
     public void ChangeValue(float value)
     {
-        if (!_isChangingValue)
-        {
-            _coroutineJob = StartCoroutine(ChangeSliderValue(value));
-        }
-        else
+        if (_isChangingValue)
         {
             StopCoroutine(_coroutineJob);
-            _coroutineJob = StartCoroutine(ChangeSliderValue(value));
         }
+        _coroutineJob = StartCoroutine(ChangeSliderValue(value));
     }
 
     private IEnumerator ChangeSliderValue(float newValue)
@@ -39,6 +35,8 @@ public class HealthBarView : MonoBehaviour
 
         while (IsEqual(_slider.value, newValue) == false)
         {
+            Debug.Log($"_slider.value = {_slider.value}");
+            Debug.Log($"newValue = {newValue}");
             float roundedValue = Mathf.Abs(newValue - _slider.value) / _duration * Time.deltaTime;
             float newValueStep = Mathf.MoveTowards(
                 _slider.value,
