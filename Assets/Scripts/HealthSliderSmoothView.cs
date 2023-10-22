@@ -1,30 +1,30 @@
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthBarView : MonoBehaviour
+public class HealthSliderSmoothView : HealthView
 {
     [SerializeField] private Slider _slider;
-    [SerializeField] private float _duration = 1.0f;
+    [SerializeField] private float _speed = 1.0f;
 
     private bool _isChangingValue = false;
     private Coroutine _coroutineJob;
 
-    public void Init(float minValue, float maxValue)
+    protected override void OnHealthInited(float minValue, float maxValue)
     {
         _slider.minValue = minValue;
         _slider.maxValue = maxValue;
         _slider.value = maxValue;
     }
 
-    public void ChangeValue(float value)
+    protected override void OnHealthChanged(float health)
     {
         if (_isChangingValue)
         {
             StopCoroutine(_coroutineJob);
         }
-        _coroutineJob = StartCoroutine(ChangeSliderValue(value));
+        _coroutineJob = StartCoroutine(ChangeSliderValue(health));
     }
 
     private IEnumerator ChangeSliderValue(float newValue)
@@ -33,15 +33,14 @@ public class HealthBarView : MonoBehaviour
 
         float elapsedTime = 0;
 
-        while (IsEqual(_slider.value, newValue) == false)
+        while (_slider.value != newValue)
         {
             Debug.Log($"_slider.value = {_slider.value}");
             Debug.Log($"newValue = {newValue}");
-            float roundedValue = Mathf.Abs(newValue - _slider.value) / _duration * Time.deltaTime;
             float newValueStep = Mathf.MoveTowards(
                 _slider.value,
                 newValue,
-                roundedValue
+                _speed * Time.deltaTime
             );
             _slider.value = newValueStep;
             elapsedTime += Time.deltaTime;
@@ -51,10 +50,5 @@ public class HealthBarView : MonoBehaviour
         _slider.value = newValue;
 
         _isChangingValue = false;
-    }
-
-    private bool IsEqual(float value1, float value2)
-    {
-        return Mathf.Round(value1) == Mathf.Round(value2);
     }
 }
