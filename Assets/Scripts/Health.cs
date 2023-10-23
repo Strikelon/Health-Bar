@@ -23,15 +23,7 @@ public class Health : MonoBehaviour
     {
         if (_currentHealth < _maxHealth)
         {
-            if (_currentHealth + _healValue > _maxHealth)
-            {
-                _currentHealth = _maxHealth;
-            }
-            else
-            {
-                _currentHealth += _healValue;
-            }
-
+            _currentHealth = Mathf.Clamp(_currentHealth + _healValue, _minHealth, _maxHealth);
             HealthChanged?.Invoke(_currentHealth);
         }
     }
@@ -40,15 +32,7 @@ public class Health : MonoBehaviour
     {
         if (_currentHealth > _minHealth)
         {
-            if (_currentHealth - _damageValue < _minHealth)
-            {
-                _currentHealth = _minHealth;
-            }
-            else
-            {
-                _currentHealth -= _damageValue;
-            }
-
+            _currentHealth = Mathf.Clamp(_currentHealth - _damageValue, _minHealth, _maxHealth);
             HealthChanged?.Invoke(_currentHealth);
         }
     }
